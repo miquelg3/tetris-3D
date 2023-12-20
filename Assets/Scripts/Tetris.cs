@@ -1,4 +1,3 @@
-using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +28,7 @@ public class Tetris : MonoBehaviour
     public delegate void puntuacion(int n);
     public static event puntuacion puntuacionActualizada;
     public Image gameOverImage;
+    public GameObject botones;
 
     
     bool[,] posiciones;
@@ -50,12 +50,23 @@ public class Tetris : MonoBehaviour
     bool pulsadoIzquierda;
     bool pulsadoAbajo;
     bool pulsadoRotar;
+    bool pulsandoBajarTodo;
     // Start is called before the first frame update
     void Start()
     {
         random = new System.Random();
-        if (columnas < 12) Camera.main.transform.Translate(Vector3.left * (12 - columnas) / 2);
-        if (columnas > 12) Camera.main.transform.Translate(Vector3.right * (columnas - 12) / 2);
+        if (columnas < 12) Camera.main.transform.Translate((Vector3.left * (12 - columnas) / 2) - new Vector3(-3, 0, 25));
+        if (columnas > 12) Camera.main.transform.Translate((Vector3.right * (columnas - 12) / 2) - new Vector3(-3, 0, 25));
+
+        if (colores[0] == null) colores[0] = Color.blue;
+        if (colores[1] == null) colores[1] = Color.yellow;
+        if (colores[2] == null) colores[2] = Color.green;
+        if (colores[3] == null) colores[3] = Color.red;
+
+        /*Vector3 posicionEnMundo = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, 0, 10f));
+
+        botones.transform.position = posicionEnMundo;*/
+
         RecibirDificultad();
         for (int x = 0; x < 4; x++)
         {
@@ -135,8 +146,9 @@ public class Tetris : MonoBehaviour
             }
         }
         // Mover hasta el final
-        if (Input.GetKeyUp(transportar) && !moviendo)
+        if (Input.GetKeyUp(transportar) || pulsandoBajarTodo && !moviendo)
         {
+            if (pulsandoBajarTodo) pulsandoBajarTodo = false;
             moviendo = true;
             while (PoderIrAbajo())
             {
@@ -758,6 +770,11 @@ public class Tetris : MonoBehaviour
     public void Rotar()
     {
         pulsadoRotar = true;
+    }
+
+    public void BajarTodo()
+    {
+        pulsandoBajarTodo = true;
     }
 
 }
