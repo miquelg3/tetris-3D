@@ -29,6 +29,7 @@ public class Tetris : MonoBehaviour
     public static event puntuacion puntuacionActualizada;
     public Image gameOverImage;
     public GameObject botones;
+    public Material movil;
 
     
     bool[,] posiciones;
@@ -71,21 +72,26 @@ public class Tetris : MonoBehaviour
         for (int x = 0; x < 4; x++)
         {
             piezas[x] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            piezas[x].GetComponent<Renderer>().material = movil;
             siguientesPiezas[x] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            siguientesPiezas[x].GetComponent<Renderer>().material = movil;
         }
         posiciones = new bool[columnas, altura];
         // Tablero
         for (int y = altura - 1; y > - 2; y--)
         {
             GameObject cuboTablero = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cuboTablero.GetComponent<Renderer>().material = movil;
             cuboTablero.transform.position = new Vector3(-1, y, 0);
             GameObject cuboTableroFinal = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cuboTableroFinal.GetComponent<Renderer>().material = movil;
             cuboTableroFinal.transform.position = new Vector3(columnas, y, 0);
             if (y == -1)
             {
                 for (int x = -1; x < columnas; x++)
                 {
                     GameObject cuboLineaFinal = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cuboLineaFinal.GetComponent<Renderer>().material = movil;
                     cuboLineaFinal.transform.position = new Vector3(x, y, 0);
                 }
             }
@@ -119,7 +125,6 @@ public class Tetris : MonoBehaviour
         // Mover derecha
         if (Input.GetKeyUp(derecha) || pulsadoDerecha && PoderIrDerecha() && !moviendo)
         {
-            if (pulsadoDerecha) pulsadoDerecha = false;
             AudioSource.PlayClipAtPoint(move, Camera.main.transform.position);
             foreach (var pieza in piezas)
             {
@@ -129,7 +134,6 @@ public class Tetris : MonoBehaviour
         // Mover a izquierda
         if (Input.GetKeyUp(izquierda) || pulsadoIzquierda && PoderIrIzquierda() && !moviendo)
         {
-            if (pulsadoIzquierda) pulsadoIzquierda = false;
             AudioSource.PlayClipAtPoint(move, Camera.main.transform.position);
             foreach (var pieza in piezas)
             {
@@ -139,7 +143,6 @@ public class Tetris : MonoBehaviour
         // Mover abajo
         if (Input.GetKeyUp(abajo) || pulsadoAbajo && PoderIrAbajoTecla(piezaAbajo) && PoderIrAbajo() && !moviendo)
         {
-            if (pulsadoAbajo) pulsadoAbajo = false;
             foreach (var pieza in piezas)
             {
                 pieza.transform.position = new Vector3(pieza.transform.position.x, pieza.transform.position.y - 1, pieza.transform.position.z);
@@ -148,7 +151,6 @@ public class Tetris : MonoBehaviour
         // Mover hasta el final
         if (Input.GetKeyUp(transportar) || pulsandoBajarTodo && !moviendo)
         {
-            if (pulsandoBajarTodo) pulsandoBajarTodo = false;
             moviendo = true;
             while (PoderIrAbajo())
             {
@@ -173,6 +175,11 @@ public class Tetris : MonoBehaviour
                 }
             }
         }
+        if (pulsadoDerecha) pulsadoDerecha = false;
+        if (pulsadoIzquierda) pulsadoIzquierda = false;
+        if (pulsadoAbajo) pulsadoAbajo = false;
+        if (pulsandoBajarTodo) pulsandoBajarTodo = false;
+        if (pulsadoRotar) pulsadoRotar = false;
     }
 
     // Crear pieza
@@ -305,6 +312,7 @@ public class Tetris : MonoBehaviour
                         Debug.Log($"Posición X: {pieza.transform.position.x}, Posición Y: {pieza.transform.position.y}");
                         posiciones[(int)pieza.transform.position.x, (int)pieza.transform.position.y] = true;
                         GameObject nuevaPosicion = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        nuevaPosicion.GetComponent<Renderer>().material = movil;
                         nuevaPosicion.transform.position = pieza.transform.position;
                         nuevaPosicion.transform.GetComponent<Renderer>().material.color = colores[colorNum];
                         todasLasPiezas.Add(new Pieza(nuevaPosicion, (int)pieza.transform.position.x, (int)pieza.transform.position.y));
